@@ -6,7 +6,7 @@ import SimpleLayout from './layouts/simple';
 import SignIn from './pages/login' 
 import SignUp from './pages/signup'
 import DashboardAppPage from './pages/DashboardAppPage';
-import ActivityPage from './pages/DashboardActivityPage';
+// import ActivityPage from './pages/DashboardActivityPage';
 
 import Page404 from './pages/Page404';
 
@@ -20,7 +20,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'activity', element: <ActivityPage /> },
+        // { path: 'activity', element: <ActivityPage /> },
         // { path: 'products', element: <ProductsPage /> },
         // { path: 'blog', element: <BlogPage /> },
       ],

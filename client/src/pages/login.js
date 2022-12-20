@@ -12,9 +12,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom';
+import {apiCaller_login} from '../api/api.local';
 
-import Api_cloud_ask from '../api/db.cloud.api';
+// import Api_cloud_ask from '../api/db.cloud.api';
 
 function Copyright(props) {
   return (
@@ -39,23 +40,19 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),}
     );
-    var params = {
-      'account': 'pengzhen@minxincorp.com',
-      'password': 'minxin',
-    };
-    //wait to response
-    const getData = async () => {
-      const res = await Api_cloud_ask('Login',params);
-      console.log(res);
-      if(res)
+    var email = data.get('email');
+    var password = data.get('password');
+    apiCaller_login(email,password)
+    .then(res=>{
+      console.log(res.data['status']);
+      if(res.data['status'] === 'ok')
       {
-        if(res['status']==='ok')
-        {
-          routeToHome();
-        }
+        routeToHome();
       }
-    };
-    getData();
+    })
+    .catch(err=>{
+      console.log(err);
+    })
     
   };
 

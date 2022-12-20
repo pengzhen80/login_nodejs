@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from 'react-router-dom'
+import {apiCaller_register} from '../api/api.local';
 
 function Copyright(props) {
   return (
@@ -33,10 +34,22 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    var firstname = data.get('firstName');
+    var lastname = data.get('lastName');
+    var email = data.get('email');
+    var password = data.get('password');
+    apiCaller_register(firstname,lastname,email,password)
+    .then(res=>{
+      console.log(res.data['status']);
+      if(res.data['status'] === 'ok')
+      {
+        navigate('/dashboard');
+      }
+    })
+    .catch(err=>{
+      console.log(err);
+    })
   };
 
   const navigate = useNavigate();
