@@ -14,7 +14,6 @@ router.post('/register',[
     body('email').isEmail(),
     body('password').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i"),
     ],function(req, res, next) {
-   
     console.log(req.body,typeof(req.body));
     // const body = JSON.parse(req.body);
     // console.log(body,typeof(body));
@@ -25,18 +24,27 @@ router.post('/register',[
     try{
         newUser = {'name':req.body['name'],'email':req.body['email'],'password':req.body['password']};
         // console.log(newUser);
-        model_user.createUser(newUser).then(
+        model_user.createUser(newUser)
+        .then(
             msg =>{
                 res.json({
+                    'status':'ok',
                     'message':msg,
                 });
             }
         )
+        .catch(err=>{
+            res.json({
+                'status':'fail',
+                'message':err,
+            });
+        })
     }
     catch(err)
     {
         console.log(err);
         return res.json({
+            'status':'fail',
             'message':'unknown fail',
         });
     }
@@ -59,15 +67,23 @@ router.post('/login',[
         model_user.validateUser(req.body).then(
             msg =>{
                 res.json({
+                    'status':'ok',
                     'message':msg,
                 });
             }
         )
+        .catch(err=>{
+            res.json({
+                'status':'fail',
+                'message':err,
+            });
+        })
     }
     catch(err)
     {
         console.log(err);
         return res.json({
+            'status':'fail',
             'message':'unknown fail',
         });
     }

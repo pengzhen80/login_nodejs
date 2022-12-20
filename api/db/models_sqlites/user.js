@@ -9,7 +9,7 @@ module.exports.createUser = function createUser(newUser) {
                     if (values[0] > 0) {
                         console.log('email already registered');
                         // return 'email already registered';
-                        resolve('email already registered');
+                        reject('email already registered');
                     }
                     else {
                         Promise.all([sql_createUser(newUser)]).then(values => {
@@ -57,7 +57,7 @@ module.exports.validateUser = function (user) {
                 if (values[0] == 0) {
                     console.log('no such email');
                     // return 'email already registered';
-                    resolve('no such email');
+                    reject('no such email');
                 }
                 else {
                     var sql = "select * from user where email = ? and password = ?";
@@ -69,7 +69,7 @@ module.exports.validateUser = function (user) {
                         }
                         else
                         {
-                            resolve('wrong password');
+                            reject('wrong password');
                         }
                     });
                 }

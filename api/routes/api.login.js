@@ -18,11 +18,36 @@ router.post('/login',[
     // console.log(body,typeof(body));
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log(errors);
       return res.status(400).json({ errors: errors.array() });
     }
-    res.json({
-        'message':'success',
-    });
+    try{
+      user = {'email':req.body['email'],'password':req.body['password']};
+      // console.log(newUser);
+      model_user.validateUser(user)
+      .then(
+          msg =>{
+              res.json({
+                  'status':'ok',
+                  'message':msg,
+              });
+          }
+      )
+      .catch(err=>{
+          res.json({
+              'status':'fail',
+              'message':err,
+          });
+      })
+    }
+    catch(err)
+    {
+        console.log(err);
+        return res.json({
+            'status':'fail',
+            'message':'unknown fail',
+        });
+    }
 });
 
 module.exports = router;
