@@ -5,12 +5,19 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { Auth0Provider } from "@auth0/auth0-react";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <HelmetProvider>
     <BrowserRouter>
+    <Auth0Provider
+    domain="dev-5d5ymf3i4ft87aa4.us.auth0.com"
+    clientId="1sgHxkHuJENHHXNZxkGYWB65AKkLPZfb"
+    redirectUri={window.location.origin}
+    >
     <App />
+    </Auth0Provider>
     </BrowserRouter>
   </HelmetProvider>
 );

@@ -14,6 +14,9 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from 'react-router-dom';
 import {apiCaller_login} from '../api/api.local';
+// import { api_auth0_login } from '../api/api.auth0';
+
+import { useAuth0 } from "@auth0/auth0-react";
 
 // import Api_cloud_ask from '../api/db.cloud.api';
 
@@ -33,6 +36,8 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const { loginWithRedirect } = useAuth0();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -110,8 +115,15 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Button
+            {/* <Button
               type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign In
+            </Button> */}
+             <Button onClick={() => loginWithRedirect()}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
