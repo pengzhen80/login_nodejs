@@ -34,7 +34,7 @@ export default function Router() {
         path: 'sign-up',
       //   element: <LoginPage />,
         element: <SignUp />
-      },
+    },
     // {
     //     element: <SimpleLayout />,
     //     children: [

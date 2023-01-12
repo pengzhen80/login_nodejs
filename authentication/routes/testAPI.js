@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var db = require("../db/db.sqlites")
+var db = require("../db/clients/db.sqlites")
 var md5 = require("md5")
 
 // router.get('/', function(req, res, next) {
