@@ -27,7 +27,7 @@ module.exports.checkUserName = function(email) {
       if (err) {
         reject(err);
       } else {
-        if(rows[0]['count']>0){
+        if(res[0]['count']>0){
             resolve(true);
         }
         else
@@ -54,7 +54,7 @@ module.exports.checkUserNameAndPassword = function(email,password) {
         if (err) {
           reject(err);
         } else {
-            resolve(rows);
+            resolve(res);
         }
       });
     });
@@ -81,8 +81,8 @@ module.exports.createUser = function(username,password,email) {
         'date_joined':''
     };
     const user_id = uuidv4();
-    email_is_verified = false;
-    date_joined = new Date.now();
+    var email_is_verified = false;
+    var date_joined = Date.now();
 
     const sql = 'insert into auth_user (user_id, username,password, email,email_is_verified, date_joined) VALUES($1,$2,$3,$4,$5,$6)';
     const params = [user_id, username,password,email,email_is_verified, date_joined];
@@ -101,7 +101,7 @@ module.exports.createUser = function(username,password,email) {
                 if (err) {
                   reject(err);
                 } else {
-                    resolve(rows);
+                    resolve(res);
                 }
               });
             });
@@ -112,7 +112,7 @@ module.exports.createUser = function(username,password,email) {
 
 /**
  *
- * @param {string}username username
+ * @param {string}email email
  * @param {string}oldpassword oldpassword
  * @param {string}newpassword newpassword
  * @return {Promise<any>} user infos
@@ -126,9 +126,29 @@ module.exports.updatePassword = function(email,oldpassword,newpassword) {
         if (err) {
           reject(err);
         } else {
-            resolve(rows);
+            resolve(res);
         }
       });
     });
+};
+
+/**
+ *
+ * @param {string}email username
+ * @return {Promise<any>} return
+ */
+module.exports.updateEmailValidated = function(email) {
+  const sql = 'update auth_user set(email_is_verified) set($1) where email = $2';
+  const params = [true,email];
+
+  return new Promise(function(resolve, reject) {
+    pgClient.query(sql, params, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+          resolve(res);
+      }
+    });
+  });
 };
 
