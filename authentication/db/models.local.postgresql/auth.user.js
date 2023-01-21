@@ -10,7 +10,7 @@ const model_template ={
     'first_name':'',
     'last_name':'',
     'email':'',
-    'email_is_verified':'',
+    'active':'',
     'date_joined':''
 };
 /**
@@ -77,15 +77,15 @@ module.exports.createUser = function(username,password,email) {
         'first_name':'',
         'last_name':'',
         'email':'',
-        'email_is_verified':'',
+        'active':'',
         'date_joined':''
     };
     const user_id = uuidv4();
-    var email_is_verified = false;
+    var active = false;
     var date_joined = Date.now();
 
-    const sql = 'insert into auth_user (user_id, username,password, email,email_is_verified, date_joined) VALUES($1,$2,$3,$4,$5,$6)';
-    const params = [user_id, username,password,email,email_is_verified, date_joined];
+    const sql = 'insert into auth_user (user_id, username,password, email,active, date_joined) VALUES($1,$2,$3,$4,$5,$6)';
+    const params = [user_id, username,password,email,active, date_joined];
 
   
     return new Promise(function(resolve, reject) {

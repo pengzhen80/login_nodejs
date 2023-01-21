@@ -1,65 +1,56 @@
-const express = require('express');
-const metadata = require('gcp-metadata');
-const {OAuth2Client} = require('google-auth-library');
+const express = require("express");
+const bodyparser = require("body-parser");
+const request = require("request");
 
-const app = express();
-const oAuth2Client = new OAuth2Client();
+let getGoogleProfile = function(accessToken) {
+  return new Promise((resolve, reject) => {
+   if(!accessToken){
+    resolve(null);
+    return
+   };
+   request(
+    `https://oauth2.googleapis.com/tokeninfo?id_token=${accessToken}`,
+    function (error, response, body) {
+     if (error) {
+      console.log(error)
+     }
+     console.log(body);
+     body = JSON.parse(body);
+     if(body.error) {
+      reject(body.error);
+     } else {
+      resolve(body);
+     }
+    }
+   )
+  })
+ }
 
-// Cache externally fetched information for future invocations
-let aud;
-
-async function audience() {
-  if (!aud && (await metadata.isAvailable())) {
-    let project_number = await metadata.project('numeric-project-id');
-    let project_id = await metadata.project('project-id');
-
-    aud = '/projects/' + project_number + '/apps/' + project_id;
+ app.post("/user/signin", function(req, res) {
+  if (!req.body.access_token) {
+    res
+      .status(400)
+      .send({ error: "Request Error: Google access token is required." });
+    return;
   }
-
-  return aud;
-}
-
-async function validateAssertion(assertion) {
-  if (!assertion) {
-    return {};
-  }
-
-  // Check that the assertion's audience matches ours
-  const aud = await audience();
-
-  // Fetch the current certificates and verify the signature on the assertion
-  const response = await oAuth2Client.getIapPublicKeys();
-  const ticket = await oAuth2Client.verifySignedJwtWithCertsAsync(
-    assertion,
-    response.pubkeys,
-    aud,
-    ['https://cloud.google.com/iap']
-  );
-  const payload = ticket.getPayload();
-
-  // Return the two relevant pieces of information
-  return {
-    email: payload.email,
-    sub: payload.sub,
-  };
-}
-
-app.get('/', async (req, res) => {
-  const assertion = req.header('X-Goog-IAP-JWT-Assertion');
-  let email = 'None';
-  try {
-    const info = await validateAssertion(assertion);
-    email = info.email;
-  } catch (error) {
-    console.log(error);
-  }
-  res.status(200).send(`Hello ${email}`).end();
-});
-
-
-// Start the server
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-  console.log('Press Ctrl+C to quit.');
+  // Get profile from google
+  getGoogleProfile(data.access_token)
+    .then(function(profile) {
+      if (!profile.name || !profile.email) {
+        res.status(400).send({
+          error: "Permissions Error: name, email are required."
+        });
+        return;
+      }
+      res.send({
+        user: {
+          name: profile.name,
+          email: profile.email,
+          picture: profile.picture
+        }
+      });
+    })
+    .catch(function(error) {
+      res.status(500).send({ error: error });
+    });
 });
