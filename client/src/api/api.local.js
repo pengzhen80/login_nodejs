@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api_url_local_base = 'http://localhost:4000/api/';
 const api_url_login = api_url_local_base+'login';
-const api_url_register = api_url_local_base+'register';
+const api_url_register = api_url_local_base+'register'+'/email';
 
 
 function apiCaller_register(firstname,lastname,email,password){
