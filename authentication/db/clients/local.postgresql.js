@@ -4,7 +4,7 @@ const pgLocalClient = new Pool(
     {
       database: 'authentication',
       host: 'localhost',
-      port: '5432',
+      port: 5432,
       user: 'pengzhen',
       password: 'pengzhen',
     },

@@ -34,7 +34,13 @@ router.post('/email', function (req, res, next) {
         errors.push('No email specified');
     }
     else{
-        if(!body['email'].isEmail())
+        function isEmail(email) {
+            var emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+            if (email !== '' && email.match(emailFormat)) { return true; }
+            
+            return false;
+        }
+        if(!isEmail(body['email']))
         {
             errors.push('email format error');
         }
@@ -45,7 +51,17 @@ router.post('/email', function (req, res, next) {
         errors.push('No password specified');
     }
     else{
-        if(!body['password'].matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i"))
+        function PasswordCheck(pwd) {
+            var padFormat = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+            if (pwd !== '' && pwd.match(padFormat)) { return true; }
+            
+            return false;
+        }
+        // if(!body['password'].matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i"))
+        // {
+        //     errors.push('password format error');
+        // }
+        if(!PasswordCheck(body['password']))
         {
             errors.push('password format error');
         }
@@ -59,9 +75,9 @@ router.post('/email', function (req, res, next) {
 
     console.log(body['password']);
     try {
-        newUser = { 'name': req.body['name'], 'email': req.body['email'], 'password': req.body['password'] };
+        // let newUser = { 'name': req.body['name'], 'email': req.body['email'], 'password': req.body['password'] };
         // console.log(newUser);
-        modelLocalPostgres.createUser(newUser)
+        modelLocalPostgres.createUser(body['name'],body['password'],body['email'])
             .then(
                 msg => {
                     res.json({

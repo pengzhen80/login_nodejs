@@ -1,4 +1,5 @@
 var express = require('express');
+const { user } = require('pg/lib/defaults');
 var router = express.Router();
 var modelLocalPostgres = require('../../../db/models.local.postgresql/auth.user');
 
@@ -37,8 +38,8 @@ router.post('/email', function (req, res, next) {
     }
     console.log(body['email']);
 
-    if (!body['password']) {
-        errors.push('No password specified');
+    if (!body['oldpassword']) {
+        errors.push('No oldpassword specified');
     }
     else{
         function PasswordCheck(pwd) {
@@ -47,40 +48,55 @@ router.post('/email', function (req, res, next) {
             
             return false;
         }
-        // if(!body['password'].matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i"))
-        // {
-        //     errors.push('password format error');
-        // }
-        if(!PasswordCheck(body['password']))
+        if(!PasswordCheck(body['oldpassword']))
         {
-            errors.push('password format error');
+            errors.push('oldpassword format error');
         }
     }
-    console.log(body['password']);
+
+    if (!body['newpassword']) {
+        errors.push('No newpassword specified');
+    }
+    else{
+        function PasswordCheck(pwd) {
+            var padFormat = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+            if (pwd !== '' && pwd.match(padFormat)) { return true; }
+            
+            return false;
+        }
+        if(!PasswordCheck(body['newpassword']))
+        {
+            errors.push('newpassword format error');
+        }
+    }
 
     if (errors.length) {
         console.log(errors);
         return res.status(400).json({ 'error': errors.join(',') });
     }
 
-    console.log(body['password']);
     try {
-        // let newUser = { 'name': req.body['name'], 'email': req.body['email'], 'password': req.body['password'] };
-        // console.log(newUser);
         modelLocalPostgres.checkEmail(body['email'])
             .then(
                 resCheckEmail => {
-                    modelLocalPostgres.checkEmailAndPassword(body['email'],body['password'])
-                    .then(rescheckEmailAndPassword=>{
-                        res.json({
-                            'status': 'success',
-                            'userid': rescheckEmailAndPassword,
-                        });
+                    modelLocalPostgres.checkEmailAndPassword(body['email'],body['oldpassword'])
+                    .then(userid=>{
+                        modelLocalPostgres.updatePassword(userid,body['email'],body['newpassword'])
+                        .then(resUpdate=>{
+                            res.json({
+                                'status': 'success',
+                            });
+                        })
+                        .catch(errUpdate=>{
+                            res.json({
+                                'status': 'fail',
+                            });
+                        })
                     })
                     .catch(errcheckEmailAndPassword=>{
                         res.json({
                             'status': 'fail',
-                            'message': 'password error',
+                            'message': 'old password error',
                         });
                     })
                 }
