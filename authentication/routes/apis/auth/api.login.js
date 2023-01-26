@@ -72,6 +72,9 @@ router.post('/email', function (req, res, next) {
                 resCheckEmail => {
                     modelLocalPostgres.checkEmailAndPassword(body['email'],body['password'])
                     .then(rescheckEmailAndPassword=>{
+                        var session = req.session;
+                        session['userid']=body['email'];
+                        console.log(req.session)
                         res.json({
                             'status': 'success',
                             'userid': rescheckEmailAndPassword,

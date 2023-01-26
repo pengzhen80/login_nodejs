@@ -1,7 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
 var cors = require('cors');
 var logger = require('morgan');
 
@@ -17,17 +16,18 @@ app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-// //add new module
-// var session = require('express-session');
-
-// // Handle Sessions
-// var sess = {
-//   genid: function(req) {
-//     return genuuid() // use UUIDs for session IDs
-//   },
-//   secret: 'keyboard cat',
-//   cookie: { maxAge: 60000}
-// }
+//for session-authentication
+const cookieParser = require("cookie-parser");
+const sessions = require('express-session');
+const oneDay = 1000 * 60 * 60 * 24;
+app.use(sessions({
+    secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+    saveUninitialized:true,
+    cookie: { maxAge: oneDay },
+    resave: false 
+}));
+// cookie parser middleware
+app.use(cookieParser());
 
 // if (app.get('env') === 'production') {
 //   app.set('trust proxy', 1) // trust first proxy

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 var bodyParser = require("body-parser");
+
 router.use(bodyParser.text({type:'*/*'}));
 
 const apiLogin = require("./auth/api.login");
